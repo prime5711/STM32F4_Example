@@ -37,7 +37,7 @@
 #include "cmsis_os.h"
 
 /* USER CODE BEGIN Includes */     
-#include <stdio.h>
+//  #include <stdio.h>
 #include "stm32f_shcho.h"
 
 /* USER CODE END Includes */
@@ -55,6 +55,7 @@ osMutexId myMutexVsyncHandle;
 
 /* USER CODE BEGIN Variables */
 osThreadId LEDThread1Handle, LEDThread2Handle;
+extern RTC_HandleTypeDef hrtc;
 
 /* USER CODE END Variables */
 
@@ -256,6 +257,7 @@ static void LED_Thread1(void const *argument)
   uint32_t count = 0;
   (void) argument;
 	uint32_t count1 = 0;
+	RTC_TimeTypeDef sTime;
   
   for(;;)
   {
@@ -290,8 +292,11 @@ static void LED_Thread1(void const *argument)
     }
     printf("======================================\n"); 
 
+  		HAL_RTC_GetTime( &hrtc, &sTime, FORMAT_BCD);
+  		printf("Date=%d:%d:%d:%d\n", sTime.Hours, sTime.Minutes, sTime.Seconds, sTime.SubSeconds);
     /* Resume Thread 2*/
     osThreadResume(LEDThread2Handle);
+
   }
 }
 
@@ -320,6 +325,7 @@ static void LED_Thread2(void const *argument)
 			printf("2=%d\n",count2++);
 
     }
+
     
     /* Turn off LED3 */
     BSP_LED_Off(LED3);

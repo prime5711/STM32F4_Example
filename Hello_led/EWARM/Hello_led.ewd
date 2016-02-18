@@ -914,7 +914,7 @@
         </option>
         <option>
           <name>CCCpuClockEdit</name>
-          <state>72.0</state>
+          <state>168.0</state>
         </option>
         <option>
           <name>CCSwoClockAuto</name>
@@ -1019,7 +1019,7 @@
         <option>
           <name>CEmuCommPort</name>
           <version>0</version>
-          <state>0</state>
+          <state>4</state>
         </option>
         <option>
           <name>jtago</name>
@@ -1086,7 +1086,7 @@
         </option>
         <option>
           <name>CCPEMicroJtagSpeed</name>
-          <state>#UNINITIALIZED#</state>
+          <state>5000</state>
         </option>
         <option>
           <name>CCJPEMicroShowSettings</name>
@@ -1321,7 +1321,7 @@
       </plugin>
       <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\OpenRTOS\OpenRTOSPlugin.ewplugin</file>
-        <loadFlag>0</loadFlag>
+        <loadFlag>1</loadFlag>
       </plugin>
       <plugin>
         <file>$TOOLKIT_DIR$\plugins\rtos\Quadros\Quadros_EWB7_Plugin.ewplugin</file>

@@ -10,3 +10,4 @@ Hello_led/tags
 *.cout
 *.map
 *.swp
+*.bin
