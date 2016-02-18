@@ -56,6 +56,7 @@ osMutexId myMutexVsyncHandle;
 /* USER CODE BEGIN Variables */
 osThreadId LEDThread1Handle, LEDThread2Handle;
 extern RTC_HandleTypeDef hrtc;
+extern UART_HandleTypeDef  huart2;
 
 /* USER CODE END Variables */
 
@@ -258,6 +259,7 @@ static void LED_Thread1(void const *argument)
   (void) argument;
 	uint32_t count1 = 0;
 	RTC_TimeTypeDef sTime;
+	RTC_DateTypeDef sDate;
   
   for(;;)
   {
@@ -293,6 +295,7 @@ static void LED_Thread1(void const *argument)
     printf("======================================\n"); 
 
   		HAL_RTC_GetTime( &hrtc, &sTime, FORMAT_BCD);
+  		HAL_RTC_GetDate( &hrtc, &sDate, FORMAT_BCD);
   		printf("Date=%d:%d:%d:%d\n", sTime.Hours, sTime.Minutes, sTime.Seconds, sTime.SubSeconds);
     /* Resume Thread 2*/
     osThreadResume(LEDThread2Handle);
@@ -310,6 +313,8 @@ static void LED_Thread2(void const *argument)
   uint32_t count;
   (void) argument;
   uint32_t count2;
+	uint8_t	buffer[12] = {0,};
+	uint32_t ret;
   
   for(;;)
   {
@@ -322,9 +327,20 @@ static void LED_Thread2(void const *argument)
       BSP_LED_Toggle(LED3);
       osDelay(500);
 
-			printf("2=%d\n",count2++);
+			printf("        2=%d\n",count2++);
 
     }
+		printf("Type Command: ");
+		ret = HAL_UART_Receive_IT(&huart2, buffer,1);
+		
+		if( ret != HAL_OK )
+		{
+			printf("HAL_UART_Receive_IT is not HAL_OK\n");
+		}
+		else
+		{
+			printf("Receive Data=%c\n",buffer[0]);
+		}
 
     
     /* Turn off LED3 */

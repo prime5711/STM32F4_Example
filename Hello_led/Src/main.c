@@ -101,16 +101,16 @@ int main(void)
   MX_WWDG_Init();
 
   /* USER CODE BEGIN 2 */
-  printf("Hello World! using %s\r\n", "printf"); //紐⑤몢李랁엺?떎.?븯吏?留? Task媛꾩뿉 ?꽌濡? 異쒕젰?쓣 ?븯硫? 寃뱀튌 ?닔?룄 ?엳?떎.
+  printf("Hello World! using %s\n", "printf"); //紐⑤몢李랁엺?떎.?븯吏?留? Task媛꾩뿉 ?꽌濡? 異쒕젰?쓣 ?븯硫? 寃뱀튌 ?닔?룄 ?엳?떎.
 
 //    HAL_UART_Transmit_IT(&huart1, "hi uart1\r\n", 10); 
-  ret =HAL_UART_Transmit(&huart2, "hi uart2 blocking\r\n", 19, 2);  //blocking
+  ret =HAL_UART_Transmit(&huart2, "hi uart2 blocking\n", 18, 2);  //blocking
 	if( ret == HAL_TIMEOUT )
 		printf("ret from HAL_UART_Transmit (blocking mode): %s\n", "HAL_TIMEOUT");
 
-  HAL_UART_Transmit_IT(&huart2, "hi uart2 IT(non-blocking)\r\n", 27);  //non blocking
+  HAL_UART_Transmit_IT(&huart2, "hi uart2 IT(non-blocking)\n", 26);  //non blocking
 
-  ret = HAL_UART_Transmit_DMA(&huart2, "hi uart2 DMA\r\n", 14);  // HAL_BUSY
+  ret = HAL_UART_Transmit_DMA(&huart2, "hi uart2 DMA\n", 13);  // HAL_BUSY
 	if( ret == HAL_BUSY )
 	{
 		HAL_UART_Transmit_IT(&huart2,"HAL_BUSY\n",9 );

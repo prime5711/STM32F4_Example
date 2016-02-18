@@ -299,6 +299,10 @@ HAL_StatusTypeDef HAL_RCCEx_PeriphCLKConfig(RCC_PeriphCLKInitTypeDef  *PeriphClk
     { 
       /* Store the content of BDCR register before the reset of Backup Domain */
       tmpreg1 = (RCC->BDCR & ~(RCC_BDCR_RTCSEL));
+
+//  			//shcho add from : https://my.st.com/public/STe2ecommunities/mcu/Lists/STM32Java/Flat.aspx?RootFolder=https%3a%2f%2fmy%2est%2ecom%2fpublic%2fSTe2ecommunities%2fmcu%2fLists%2fSTM32Java%2fRTC%20LSELSI%20settings%20from%20STM32Cube%20does%20not%20work&FolderCTID=0x01200200770978C69A1141439FE559EB459D758000F9A0E3A95BA69146A17C2E80209ADC21&currentviews=1944
+//  			HAL_PWR_EnableUpAccess();
+
       /* RTC Clock selection can be changed only if the Backup Domain is reset */
       __HAL_RCC_BACKUPRESET_FORCE();
       __HAL_RCC_BACKUPRESET_RELEASE();
