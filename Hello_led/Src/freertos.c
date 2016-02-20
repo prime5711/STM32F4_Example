@@ -260,10 +260,12 @@ static void LED_Thread1(void const *argument)
 	uint32_t count1 = 0;
 	RTC_TimeTypeDef sTime;
 	RTC_DateTypeDef sDate;
+	uint32_t tmpreg ; 
+	RTC_HandleTypeDef *phrtc;
   
   for(;;)
   {
-    count = osKernelSysTick() + 4800;
+    count = osKernelSysTick() + 1800;
     
 		count1 = 0 ;
     /* Toggle LED1 every 200 ms for 4.8 s */
@@ -281,7 +283,7 @@ static void LED_Thread1(void const *argument)
     /* Suspend Thread 1 */
     osThreadSuspend(NULL);
     
-    count = osKernelSysTick() + 4800;
+    count = osKernelSysTick() + 1800;
     
 		count1 = 0 ;
     /* Toggle LED1 every 400 ms for 4.8 s */
@@ -292,11 +294,53 @@ static void LED_Thread1(void const *argument)
 
      	printf("1-2=%d.\n",count1++); 
     }
-    printf("======================================\n"); 
+    printf("=====================\n"); 
 
-  		HAL_RTC_GetTime( &hrtc, &sTime, FORMAT_BCD);
-  		HAL_RTC_GetDate( &hrtc, &sDate, FORMAT_BCD);
-  		printf("Date=%d:%d:%d:%d\n", sTime.Hours, sTime.Minutes, sTime.Seconds, sTime.SubSeconds);
+		///========================================================================================
+		phrtc = &hrtc;
+//    	__HAL_LOCK(&hrtc);
+  	hrtc.State = HAL_RTC_STATE_BUSY;
+
+
+  	printf("RTC TR    =0x%08x\n",(uint32_t)(phrtc->Instance->TR & RTC_TR_RESERVED_MASK)); 
+  	printf("RTC DR    =0x%08x\n",(uint32_t)(phrtc->Instance->DR & RTC_DR_RESERVED_MASK)); 
+  	printf("RTC CR    =0x%08x\n",(uint32_t)(phrtc->Instance->CR      )); 
+  	printf("RTC ISR   =0x%08x\n",(uint32_t)(phrtc->Instance->ISR     )); 
+  	printf("RTC WUTR  =0x%08x\n",(uint32_t)(phrtc->Instance->WUTR    )); 
+  	printf("RTC ALRMAR=0x%08x\n",(uint32_t)(phrtc->Instance->ALRMAR  )); 
+  	printf("RTC ALRMBR=0x%08x\n",(uint32_t)(phrtc->Instance->ALRMBR  )); 
+
+
+//  	  /* Disable the write protection for RTC registers */
+//  	  __HAL_RTC_WRITEPROTECTION_DISABLE(phrtc);
+//  
+//    	phrtc->Instance->CR |= RTC_CR_BYPSHAD ; 
+//  
+//      /* Enable the write protection for RTC registers */
+//      __HAL_RTC_WRITEPROTECTION_ENABLE(phrtc);
+
+   	phrtc->State = HAL_RTC_STATE_READY;
+//     	__HAL_UNLOCK(&hrtc); 
+		///========================================================================================
+
+		HAL_RTC_GetTime( &hrtc, &sTime, FORMAT_BIN);
+  	HAL_RTC_GetDate( &hrtc, &sDate, FORMAT_BIN);
+		// ============== Important ===================
+		// Wakeup is not work during Debug mode <--------------
+		// Alarm is not periodic
+		// even in STOP Mode,  Alarm Event is work
+  	printf("Before STOP @ %2d:%2d:%2d.%03d\n", sTime.Hours, sTime.Minutes, sTime.Seconds, sTime.SubSeconds);
+
+  	HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 5, RTC_WAKEUPCLOCK_CK_SPRE_16BITS);
+//  		HAL_PWR_EnterSLEEPMode(PWR_LOWPOWERREGULATOR_ON,PWR_SLEEPENTRY_WFI );
+		HAL_PWR_EnterSTOPMode(PWR_LOWPOWERREGULATOR_ON,PWR_STOPENTRY_WFI );
+		HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
+
+		HAL_RTC_GetTime( &hrtc, &sTime, FORMAT_BIN);
+  	HAL_RTC_GetDate( &hrtc, &sDate, FORMAT_BIN);
+  	printf("After  STOP @ %2d:%2d:%2d.%03d\n", sTime.Hours, sTime.Minutes, sTime.Seconds, sTime.SubSeconds);
+
+  
     /* Resume Thread 2*/
     osThreadResume(LEDThread2Handle);
 
@@ -318,7 +362,8 @@ static void LED_Thread2(void const *argument)
   
   for(;;)
   {
-    count = osKernelSysTick() + 10000;
+//      count = osKernelSysTick() + 10000;
+    count = osKernelSysTick() + 3000;
     
 		count2 = 0 ;
     /* Toggle LED3 every 500 ms for 10 s */
@@ -335,11 +380,11 @@ static void LED_Thread2(void const *argument)
 		
 		if( ret != HAL_OK )
 		{
-			printf("HAL_UART_Receive_IT is not HAL_OK\n");
+			printf("NOT HAL_OK\n");
 		}
 		else
 		{
-			printf("Receive Data=%c\n",buffer[0]);
+			printf("Data=%c\n",buffer[0]);
 		}
 
     

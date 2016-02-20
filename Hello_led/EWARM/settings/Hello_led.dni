@@ -21,7 +21,7 @@ FirstRun=0
 [ArmDriver]
 EnableCache=1
 [DebugChecksum]
-Checksum=216106313
+Checksum=1077617720
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -34,8 +34,8 @@ MixedMode=1
 [SWOManager]
 SamplingDivider=8192
 OverrideClock=0
-CpuClock=1852398691
-SwoClock=1852404340
+CpuClock=72000000
+SwoClock=0
 DataLogMode=0
 ItmPortsEnabled=63
 ItmTermIOPorts=1
@@ -118,7 +118,10 @@ LogFile=_ ""
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Count=0
+Bp0=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\stm32f4xx_it.c}.251.3" 0 0 1 "" 0 "" 0
+Bp1=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\freertos.c}.332.3" 0 0 1 "" 0 "" 0
+Bp2=_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\Src\stm32f4xx_it.c}.109.3" 0 0 1 "" 0 "" 0
+Count=3
 [Aliases]
 Count=0
 SuppressDialog=0

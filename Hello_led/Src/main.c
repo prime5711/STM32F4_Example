@@ -51,6 +51,7 @@
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
+HAL_StatusTypeDef shcho_ret = 0;
 
 /* USER CODE END PV */
 
@@ -100,8 +101,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_WWDG_Init();
 
+
   /* USER CODE BEGIN 2 */
-  printf("Hello World! using %s\n", "printf"); //ï§â‘¤ëª¢ï§¡ëžì—º?ë–Ž.?ë¸¯ï§ž?ï§? Taskåª›ê¾©ë¿‰ ?ê½Œæ¿¡? ç•°ì’•ì °?ì“£ ?ë¸¯ï§Ž? å¯ƒë±€íŠŒ ?ë‹”?ë£„ ?ì—³?ë–Ž.
+  printf("Hello World! using %s\n", "printf"); //ï§â‘¤ëª?ï§¡ëž?—º??–Ž.?ë¸?ï§??ï§?? Taskåª›ê¾©ë¿? ?ê½Œæ¿¡? ?•°?’•? °??“£ ?ë¸?ï§?? å¯ƒë??ŠŒ ??‹”?ë£? ??—³??–Ž.
 
 //    HAL_UART_Transmit_IT(&huart1, "hi uart1\r\n", 10); 
   ret =HAL_UART_Transmit(&huart2, "hi uart2 blocking\n", 18, 2);  //blocking
@@ -116,6 +118,16 @@ int main(void)
 		HAL_UART_Transmit_IT(&huart2,"HAL_BUSY\n",9 );
 		printf("ret from HAL_UART_Transmit_DMA: %s\n", "HAL_BUSY");
 	}
+
+  /* Disable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_DISABLE(&hrtc);
+
+  hrtc.Instance->CR |=  (uint32_t)RTC_CR_WUTE;
+
+  /* Enable the write protection for RTC registers */
+  __HAL_RTC_WRITEPROTECTION_ENABLE(&hrtc); 
+
+
 
   /* USER CODE END 2 */
 
@@ -153,19 +165,20 @@ void SystemClock_Config(void)
 
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = 16;
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 13;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;
   RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 7;
   HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_PCLK1
-                              |RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;

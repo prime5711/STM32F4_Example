@@ -36,7 +36,14 @@
 #include "rtc.h"
 
 /* USER CODE BEGIN 0 */
-
+//  	//==================================================
+//  	//shcho change
+//  //    hrtc.Init.AsynchPrediv = 127;
+//  //    hrtc.Init.SynchPrediv = 255;
+//    hrtc.Init.AsynchPrediv = 0x1F;
+//    hrtc.Init.SynchPrediv  = 0x3FF;
+//  	//==================================================
+  
 /* USER CODE END 0 */
 
 RTC_HandleTypeDef hrtc;
@@ -59,42 +66,38 @@ void MX_RTC_Init(void)
   hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
   HAL_RTC_Init(&hrtc);
 
-  sTime.Hours = 0x0;
-  sTime.Minutes = 0x0;
-  sTime.Seconds = 0x0;
+  sTime.Hours = 0;
+  sTime.Minutes = 0;
+  sTime.Seconds = 0;
   sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-  HAL_RTC_SetTime(&hrtc, &sTime, FORMAT_BCD);
+  HAL_RTC_SetTime(&hrtc, &sTime, FORMAT_BIN);
 
   sDate.WeekDay = RTC_WEEKDAY_MONDAY;
   sDate.Month = RTC_MONTH_JANUARY;
-  sDate.Date = 0x1;
-  sDate.Year = 0x0;
+  sDate.Date = 1;
+  sDate.Year = 0;
 
-  HAL_RTC_SetDate(&hrtc, &sDate, FORMAT_BCD);
+  HAL_RTC_SetDate(&hrtc, &sDate, FORMAT_BIN);
 
     /**Enable the Alarm A 
     */
-  sAlarm.AlarmTime.Hours = 0x0;
-  sAlarm.AlarmTime.Minutes = 0x0;
-  sAlarm.AlarmTime.Seconds = 0x0;
-  sAlarm.AlarmTime.SubSeconds = 0x0;
+  sAlarm.AlarmTime.Hours = 0;
+  sAlarm.AlarmTime.Minutes = 1;
+  sAlarm.AlarmTime.Seconds = 0;
+  sAlarm.AlarmTime.SubSeconds = 0;
   sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
   sAlarm.AlarmMask = RTC_ALARMMASK_NONE;
   sAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
   sAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
-  sAlarm.AlarmDateWeekDay = 0x1;
+  sAlarm.AlarmDateWeekDay = 1;
   sAlarm.Alarm = RTC_ALARM_A;
-  HAL_RTC_SetAlarm(&hrtc, &sAlarm, FORMAT_BCD);
+  HAL_RTC_SetAlarm_IT(&hrtc, &sAlarm, FORMAT_BIN);
 
     /**Enable the WakeUp 
     */
-  HAL_RTCEx_SetWakeUpTimer(&hrtc, 0, RTC_WAKEUPCLOCK_RTCCLK_DIV16);
-
-    /**Enable Calibrartion 
-    */
-  HAL_RTCEx_SetCalibrationOutPut(&hrtc, RTC_CALIBOUTPUT_1HZ);
+  HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 10, RTC_WAKEUPCLOCK_CK_SPRE_16BITS);
 
 }
 
@@ -108,6 +111,12 @@ void HAL_RTC_MspInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE END RTC_MspInit 0 */
     /* Peripheral clock enable */
     __HAL_RCC_RTC_ENABLE();
+
+    /* Peripheral interrupt init*/
+    HAL_NVIC_SetPriority(RTC_WKUP_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(RTC_WKUP_IRQn);
+    HAL_NVIC_SetPriority(RTC_Alarm_IRQn, 5, 0);
+    HAL_NVIC_EnableIRQ(RTC_Alarm_IRQn);
   /* USER CODE BEGIN RTC_MspInit 1 */
 
   /* USER CODE END RTC_MspInit 1 */
@@ -124,8 +133,26 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE END RTC_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_RTC_DISABLE();
+
+    /* Peripheral interrupt Deinit*/
+    HAL_NVIC_DisableIRQ(RTC_WKUP_IRQn);
+
+    HAL_NVIC_DisableIRQ(RTC_Alarm_IRQn);
+
   }
   /* USER CODE BEGIN RTC_MspDeInit 1 */
+
+//    /* Configure the RTC WakeUp Clock source: CK_SPRE (1Hz) */
+//    RTC_WakeUpClockConfig(RTC_WakeUpClock_CK_SPRE_16bits);
+//    RTC_SetWakeUpCounter(0x0);
+//  // RTC_CR_WUTE
+//  // RTC_WUTR_WUT
+//  
+//    /* Enable the RTC Wakeup Interrupt */
+//    RTC_ITConfig(RTC_IT_WUT, ENABLE);
+//    
+//    /* Enable Wakeup Counter */
+//    RTC_WakeUpCmd(ENABLE);
 
   /* USER CODE END RTC_MspDeInit 1 */
 } 
