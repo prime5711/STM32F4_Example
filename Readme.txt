@@ -2,6 +2,9 @@ Example for
 
 using  STM32F4_Example_FreeRTOS_Alarm_Wakeup_printf.ioc as Template
 
+**Strange Problem: Using HSE 26MHz Clock  and LSI(32KHz) : RTC Does not work
+ HSI / LSI : Work
+
 1. printf  using UART2
 2. Trasnmit using blockiing/Non-blocking 
 3. Thread  Pause/Resume
