@@ -567,15 +567,14 @@ HAL_StatusTypeDef HAL_RTC_GetTime(RTC_HandleTypeDef *hrtc, RTC_TimeTypeDef *sTim
   /* Check the parameters */
   assert_param(IS_RTC_FORMAT(Format));
   
-//    /* Get subseconds structure field from the corresponding register */
-//    sTime->SubSeconds = (uint32_t)(hrtc->Instance->SSR);
-//    
-//    /* Get SecondFraction structure field from the corresponding register field*/
-//    sTime->SecondFraction = (uint32_t)(hrtc->Instance->PRER & RTC_PRER_PREDIV_S);
+  /* Get subseconds structure field from the corresponding register */
+  sTime->SubSeconds = (uint32_t)(hrtc->Instance->SSR);
+  
+  /* Get SecondFraction structure field from the corresponding register field*/
+  sTime->SecondFraction = (uint32_t)(hrtc->Instance->PRER & RTC_PRER_PREDIV_S);
 
   /* Get the TR register */
   tmpreg = (uint32_t)(hrtc->Instance->TR & RTC_TR_RESERVED_MASK); 
-//    tmpreg = (uint32_t)(hrtc->Instance->SSR & RTC_TR_RESERVED_MASK); 
   
   /* Fill the structure fields with the read parameters */
   sTime->Hours = (uint8_t)((tmpreg & (RTC_TR_HT | RTC_TR_HU)) >> 16U);
@@ -727,7 +726,6 @@ HAL_StatusTypeDef HAL_RTC_GetDate(RTC_HandleTypeDef *hrtc, RTC_DateTypeDef *sDat
           
   /* Get the DR register */
   datetmpreg = (uint32_t)(hrtc->Instance->DR & RTC_DR_RESERVED_MASK); 
-//    datetmpreg = (uint32_t)(hrtc->Instance->SSR & RTC_DR_RESERVED_MASK); 
 
   /* Fill the structure fields with the read parameters */
   sDate->Year = (uint8_t)((datetmpreg & (RTC_DR_YT | RTC_DR_YU)) >> 16U);
